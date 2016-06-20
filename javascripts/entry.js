@@ -1,6 +1,23 @@
 import React from 'react';
 import ReactDom, { render } from 'react-dom';
+import { createStore, compose } from 'redux';
+
+import rootReducer from './reducers/rootReducer';
 import AudioPlayer from 'components/audioPlayer';
+
+const initStore = (changeMiddlewares = mws => mws) => createStore(
+
+    //use root reducer
+    rootReducer,
+
+    compose(
+        ...changeMiddlewares([
+            window.devToolsExtension ? window.devToolsExtension() : f => f
+        ])
+    )
+);
+
+const store = initStore();
 
 $(() => {
 
@@ -9,7 +26,7 @@ $(() => {
     };
 
     render(
-        <AudioPlayer song = {song} />,
+        <AudioPlayer song = {song} store = {store}/>,
         document.querySelector('.test')
     );
 });

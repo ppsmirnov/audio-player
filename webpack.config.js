@@ -7,42 +7,51 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 console.log(__dirname);
 
 var config = {
-  context: __dirname,
+    context: __dirname,
 
-  entry: {
-    bundle: ['webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
-      'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-      "./javascripts/entry"]
-  },
+    entry: {
+        bundle: ['webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
+            'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
+            "./javascripts/entry"
+        ]
+    },
 
-  devtool: 'cheap-module-source-map',
+    devtool: 'cheap-module-source-map',
 
-  output:
-  {
-    path: __dirname + "/webpack_dist",
-    filename:"[name].js",
-    publicPath: '/assets/'
-  },
+    output: {
+        path: __dirname + "/webpack_dist",
+        filename: "[name].js",
+        publicPath: '/assets/'
+    },
 
-  plugins: [
-    new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin("[name].css"),
-    new webpack.PrefetchPlugin('jquery'),
-    new webpack.ProvidePlugin({$: 'jquery'}),
-    new webpack.HotModuleReplacementPlugin()
-  ],
+    plugins: [
+        new webpack.NoErrorsPlugin(),
+        new ExtractTextPlugin("[name].css"),
+        new webpack.PrefetchPlugin('jquery'),
+        new webpack.ProvidePlugin({
+            $: 'jquery'
+        }),
+        new webpack.HotModuleReplacementPlugin()
+    ],
 
-  module: {
-    loaders: [
-      {test: /\.jsx?$/, exclude: /node_modules/, loaders: ['react-hot', 'babel-loader']},
-      {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
-      {test: /\.png|jpg|svg|ttf|otf|woff|woff2$/, loader: "file-loader?limit=100000"}
-    ]
-  },
+    module: {
+        loaders: [{
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            loaders: ['react-hot', 'babel-loader']
+        }, {
+            test: /\.css$/,
+            loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+        }, {
+            test: /\.png|jpg|svg|ttf|otf|woff|woff2$/,
+            loader: "file-loader?limit=100000"
+        }]
+    },
 
-  devServer: {
     devServer: {
-        headers: {"Access-Control-Allow-Origin": "*"},
+        headers: {
+            "Access-Control-Allow-Origin": "*"
+        },
         stats: {
             // console output
             assets: true,
@@ -50,21 +59,20 @@ var config = {
             version: true,
             hash: true,
             timings: true,
-            chunks: true,
+            chunks: false,
             chunkModules: false,
             cached: true,
             reasons: true,
             errorDetails: true
         }
+    },
+
+    debug: true,
+
+    resolve: {
+        extensions: ['', '.js', '.jsx'],
+        modulesDirectories: ["node_modules", "javascripts"]
     }
-  },
-
-  debug: true,
-
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-    modulesDirectories: ["node_modules", "javascripts"]
-  }
 };
 
 module.exports = config;

@@ -1,37 +1,34 @@
-import React, { Component } from 'react';
-import { Howl } from 'howler';
+import React, { Component, PropTypes } from 'react';
+
+import Buttons from './buttons';
+import Volume from './volume';
+import Position from './position';
+
+import {
+    INIT_PLAYER,
+} from '../actions/actionTypes';
 
 class AudioPlayer extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            playing: false
-        };
-
-        this.howler = new Howl({
-            urls: [this.props.song.src],
+    componentDidMount() {
+        this.props.store.dispatch({
+            type: INIT_PLAYER,
+            payload: {
+                key: 'na-zare',
+                urls: [this.props.song.src],
+            }
         });
-    }
-
-    playMusic() {
-        console.log(this.howler);
-
-        if (this.state.playing) {
-            console.log('Stop');
-            this.howler.stop();
-        } else {
-            console.log('Play');
-            this.howler.play();
-        }
-
-        this.setState({playing: !this.state.playing});
     }
 
     render() {
         return (
-            <div className = 'audio-player' onClick = {this.playMusic.bind(this)}>
-                test
+            <div className = 'audio-player'>
+                <p>{this.props.song.src}</p>
+                <Buttons playerKey = 'na-zare' store = {this.props.store} />
+                <span>Volume: </span>
+                <Volume playerKey = 'na-zare' store = {this.props.store} />
+                <span>Position: </span>
+                <Position playerKey = 'na-zare' store = {this.props.store} />
             </div>
         );
     }

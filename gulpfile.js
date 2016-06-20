@@ -12,7 +12,7 @@ var gutil = require("gulp-util");
 
 
 
-var folder = '/scss';
+var folder = './scss';
 var spriteFolder = './images';
 var files = '**/*.scss';
 
@@ -28,7 +28,7 @@ gulp.task('styles', function () {
         browsers: ['last 2 version', 'IE 9']
       }))
       // Outputs CSS files in the css folder
-      .pipe(gulp.dest(folder)); 
+      .pipe(gulp.dest(folder));
 });
 
 gulp.task('sprites', function() {
@@ -53,7 +53,7 @@ gulp.task('watch', function () {
   // Watches the scss folder for all .scss and .sass files
   // If any file changes, run the sass task
   gulp.watch(spriteFolder, ['sprites']);
-  gulp.watch(folder + files, ['sass']);
+  gulp.watch(folder + files, ['styles']);
   gulp.watch('./jade/*.jade', ['jade']);
 });
 
