@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import Buttons from './buttons';
 import Volume from './volume';
 import Position from './position';
+import Slider from './slider';
 
 import {
     INIT_PLAYER,
@@ -29,6 +30,9 @@ class AudioPlayer extends Component {
                 <Volume playerKey = 'na-zare' store = {this.props.store} />
                 <span>Position: </span>
                 <Position playerKey = 'na-zare' store = {this.props.store} />
+                <div className = 'slider-container'>
+                    <Slider />
+                </div>
             </div>
         );
     }
