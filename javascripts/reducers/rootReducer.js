@@ -1,12 +1,11 @@
 import * as actionTypes from '../actions/actionTypes';
-import { Howl } from 'howler';
 
 const rootReducer = (state = {}, action) => {
     if (action.type == actionTypes.INIT_PLAYER) {
 
         const newState = {
             [action.payload.key]: {
-                howler: new Howl({urls: action.payload.urls}),
+                audio: new Audio(action.payload.urls),
                 isPlayed: false
             }
         };
@@ -16,12 +15,12 @@ const rootReducer = (state = {}, action) => {
 
     if (action.type == actionTypes.PLAY_PLAYER) {
 
-        let howler = state[action.payload.key].howler;
-        howler.play();
+        let audio = state[action.payload.key].audio;
+        audio.play();
 
         const newState = {
             [action.payload.key]: {
-                howler,
+                audio,
                 isPlayed: true
             }
         };
@@ -29,14 +28,14 @@ const rootReducer = (state = {}, action) => {
         return newState;
     }
 
-    if (action.type == actionTypes.STOP_PLAYER) {
+    if (action.type == actionTypes.PAUSE_PLAYER) {
 
-        let howler = state[action.payload.key].howler;
-        howler.stop();
+        let audio = state[action.payload.key].audio;
+        audio.pause();
 
         const newState = {
             [action.payload.key]: {
-                howler,
+                audio,
                 isPlayed: false
             }
         };

@@ -26,12 +26,11 @@ class AudioPlayer extends Component {
             <div className = 'audio-player'>
                 <p>{this.props.song.src}</p>
                 <Buttons playerKey = 'na-zare' store = {this.props.store} />
-                <span>Volume: </span>
-                <Volume playerKey = 'na-zare' store = {this.props.store} />
-                <span>Position: </span>
-                <Position playerKey = 'na-zare' store = {this.props.store} />
-                <div className = 'slider-container'>
-                    <Slider />
+                <div className = 'position-container'>
+                    <Position playerKey = 'na-zare' store = {this.props.store} />
+                </div>
+                <div className = 'volume-container'>
+                    <Volume playerKey = 'na-zare' store = {this.props.store} />
                 </div>
             </div>
         );

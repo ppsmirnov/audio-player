@@ -2,38 +2,28 @@ import React, { Component, PropTypes } from 'react';
 import ReactDom, { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 
+import Slider from './slider';
+
 class Volume extends Component {
-    handleClick(event) {
-        const node = findDOMNode(this);
-
-        const offset = $(node).offset().left;
-        const width = $(node).width();
-        const clickOffset = event.nativeEvent.x;
-
-        const newVolume = (clickOffset - offset) / width;
-
-        let $slider = $(this.refs.slider);
-        $slider.width(clickOffset - offset);
-
-        this.props.howler.volume(newVolume);
+    onSliderChange(newVolume) {
+        this.props.audio.volume = (newVolume / 100);
     }
 
     render() {
         return (
-            <div className = 'audio-player__volume'
-                 onClick = {this.handleClick.bind(this)}>
-                <div className = 'audio-player__volume-slider' ref = 'slider'/>
+            <div className = 'audio-player__volume'>
+                <Slider onSliderChange = {this.onSliderChange.bind(this)} pos = {100}/>
             </div>
          );
     }
 }
 
 export default connect((state) => {
-    let howler;
+    let audio;
 
     if (state['na-zare']) {
-        howler = state['na-zare'].howler;
+        audio = state['na-zare'].audio;
     }
 
-    return { howler };
+    return { audio };
 })(Volume);

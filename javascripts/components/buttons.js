@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 import {
     PLAY_PLAYER,
-    STOP_PLAYER
+    PAUSE_PLAYER
 } from '../actions/actionTypes';
 
 class Buttons extends Component {
@@ -12,7 +12,7 @@ class Buttons extends Component {
     playMusic() {
         if (this.props.isPlaying) {
             this.props.store.dispatch({
-                type: STOP_PLAYER,
+                type: PAUSE_PLAYER,
                 payload: {
                     key: 'na-zare'
                 }

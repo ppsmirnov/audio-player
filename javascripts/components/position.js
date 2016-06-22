@@ -3,39 +3,60 @@ import ReactDom, { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 
 class Position extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            offset: 0,
+            width: 0
+        };
+    }
+
     componentDidMount() {
-        const node = findDOMNode(this);
+        this.setDimVariables();
+    }
 
-        const offset = $(node).offset().left;
-        const width = $(node).width();
-        let $slider = $(this.refs.slider);
+    componentDidUpdate() {
+        if (this.props.isPlaying) {
+            this.interval = setInterval(() => {
+                const pos = this.props.audio.currentTime;
+                const buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
 
-        setInterval(() => {
-            const pos = this.props.howler.pos();
-            $slider.width(pos * width / this.props.howler._duration);
-            // console.log('Postion!', pos);
-        }, 400);
+                $(this.refs.slider).width(pos * this.state.width / this.props.audio.duration);
+                $(this.refs.buffer).width(buffer * this.state.width / this.props.audio.duration);
+
+            }, 400);
+        } else {
+            clearInterval(this.interval);
+        }
+    }
+
+    setDimVariables() {
+        const dims = this.refs.container.getBoundingClientRect();
+
+        this.setState({
+            offset: dims.left,
+            width: dims.width
+        });
     }
 
     handleClick(event) {
-        const node = findDOMNode(this);
-
-        const offset = $(node).offset().left;
-        const width = $(node).width();
         const clickOffset = event.nativeEvent.x;
 
-        const newVolume = (clickOffset - offset) / width;
+        const newVolume = (clickOffset - this.state.offset) / this.state.width;
 
-        let $slider = $(this.refs.slider);
-        $slider.width(clickOffset - offset);
+        $(this.refs.slider).width(clickOffset - this.state.offset);
 
-        this.props.howler.pos(newVolume * this.props.howler._duration);
+        this.props.audio.currentTime = (newVolume * this.props.audio.duration);
     }
 
     render() {
         return (
             <div className = 'audio-player__position'
-                 onClick = {this.handleClick.bind(this)}>
+                 onClick = {this.handleClick.bind(this)}
+                 ref = 'container'>
+                <div className = 'audio-player__position-buffer' ref = 'buffer'/>
                 <div className = 'audio-player__position-slider' ref = 'slider'/>
             </div>
          );
@@ -43,13 +64,13 @@ class Position extends Component {
 }
 
 export default connect((state) => {
-    let howler;
+    let audio;
     let isPlaying = false;
 
     if (state['na-zare']) {
-        howler = state['na-zare'].howler;
+        audio = state['na-zare'].audio;
         isPlaying = state['na-zare'].isPlayed;
     }
 
-    return { howler, isPlaying };
+    return { audio, isPlaying };
 })(Position);

@@ -1,32 +1,60 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom, { findDOMNode } from 'react-dom';
 
-var globalFrame;
-
 class Slider extends Component {
-    mouseMoveHandle() {
-        console.log('Mouse Move!');
-        globalFrame = requestAnimationFrame(this.mouseMoveHandle.bind(this));
+
+    componentDidMount() {
+        this.setDimVariables();
+
+        $(this.refs.pos).css('left', this.props.pos + '%');
     }
 
-    mouseUpHandle() {
-        console.log('Mouse Up!');
-        cancelAnimationFrame(globalFrame);
+    setDimVariables() {
+        const dims = this.refs.container.getBoundingClientRect();
+
+        this.setState({
+            offset: dims.left,
+            width: dims.width,
+            posWidth: $(this.refs.pos).width()
+        });
     }
 
-    mouseDownHandle() {
-        console.log('Mouse Down!');
-        globalFrame = requestAnimationFrame(this.mouseMoveHandle.bind(this));
+    onMouseDown() {
+        $(document).on('mousemove', (event) => {
+            this.onSliderClick(event);
+        });
+
+        $(document).one('mouseup', (event) => {
+            $(document).off('mousemove');
+        });
+    }
+
+    onSliderClick(event) {
+        const rawNewLeft = (event.clientX - this.state.offset - this.state.posWidth / 2) / this.state.width * 100;
+        const newLeft = this.checkSliderRange(rawNewLeft);
+
+        $(this.refs.pos).css('left', newLeft + '%');
+        if (this.props.onSliderChange) this.props.onSliderChange(newLeft);
+    }
+
+    checkSliderRange(value) {
+        if (value > 100) {
+            return 100;
+        } else if (value < 0) {
+            return 0;
+        }
+
+        return value;
     }
 
     render() {
         return (
-            <div className = 'slider'>
+            <div className = 'slider'
+                  onMouseDown = {this.onSliderClick.bind(this)}
+                  ref = 'container'>
                 <div className = 'slider-pos'
-                     ref = 'slider'
-                     onMouseDown = {this.mouseDownHandle.bind(this)}
-                     onMouseUp = {this.mouseUpHandle.bind(this)}
-                     />
+                     ref = 'pos'
+                     onMouseDown = {this.onMouseDown.bind(this)}/>
             </div>
          );
     }
