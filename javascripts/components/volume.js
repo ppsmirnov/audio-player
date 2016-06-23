@@ -12,17 +12,17 @@ class Volume extends Component {
     render() {
         return (
             <div className = 'audio-player__volume'>
-                <Slider onSliderChange = {this.onSliderChange.bind(this)} pos = {100}/>
+                <Slider onSliderChange = {this.onSliderChange.bind(this)} pos = {50}/>
             </div>
          );
     }
 }
 
-export default connect((state) => {
+export default connect((state, props) => {
     let audio;
 
-    if (state['na-zare']) {
-        audio = state['na-zare'].audio;
+    if (state[props.playerKey]) {
+        audio = state[props.playerKey].audio;
     }
 
     return { audio };

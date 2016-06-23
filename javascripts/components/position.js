@@ -19,17 +19,20 @@ class Position extends Component {
 
     componentDidUpdate() {
         if (this.props.isPlaying) {
-            this.interval = setInterval(() => {
-                const pos = this.props.audio.currentTime;
-                const buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
-
-                $(this.refs.slider).width(pos * this.state.width / this.props.audio.duration);
-                $(this.refs.buffer).width(buffer * this.state.width / this.props.audio.duration);
-
-            }, 400);
+            this.interval = requestAnimationFrame(this.updateSliders.bind(this));
         } else {
-            clearInterval(this.interval);
+            cancelAnimationFrame(this.interval);
         }
+    }
+
+    updateSliders() {
+        const pos = this.props.audio.currentTime;
+        const buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
+
+        $(this.refs.slider).width(pos * this.state.width / this.props.audio.duration);
+        $(this.refs.buffer).width(buffer * this.state.width / this.props.audio.duration);
+
+        this.interval = requestAnimationFrame(this.updateSliders.bind(this));
     }
 
     setDimVariables() {
@@ -63,13 +66,13 @@ class Position extends Component {
     }
 }
 
-export default connect((state) => {
+export default connect((state, props) => {
     let audio;
     let isPlaying = false;
 
-    if (state['na-zare']) {
-        audio = state['na-zare'].audio;
-        isPlaying = state['na-zare'].isPlayed;
+    if (state[props.playerKey]) {
+        audio = state[props.playerKey].audio;
+        isPlaying = state[props.playerKey].isPlayed;
     }
 
     return { audio, isPlaying };

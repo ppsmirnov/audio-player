@@ -4,7 +4,8 @@ import cn from 'classnames';
 
 import {
     PLAY_PLAYER,
-    PAUSE_PLAYER
+    PAUSE_PLAYER,
+    PAUSE_ALL_PLAYERS
 } from '../actions/actionTypes';
 
 class Buttons extends Component {
@@ -14,20 +15,23 @@ class Buttons extends Component {
             this.props.store.dispatch({
                 type: PAUSE_PLAYER,
                 payload: {
-                    key: 'na-zare'
+                    key: this.props.playerKey
                 }
             });
         } else {
+            this.props.store.dispatch({type: PAUSE_ALL_PLAYERS});
             this.props.store.dispatch({
                 type: PLAY_PLAYER,
                 payload: {
-                    key: 'na-zare'
+                    key: this.props.playerKey
                 }
             });
         }
     }
 
     render() {
+        console.log(this.props);
+
         const playing = this.props.isPlaying;
 
         const classes = cn(
@@ -44,11 +48,11 @@ class Buttons extends Component {
     }
 }
 
-export default connect((state) => {
+export default connect((state, props) => {
     let isPlaying = false;
 
-    if (state['na-zare']) {
-        isPlaying = state['na-zare'].isPlayed;
+    if (state[props.playerKey]) {
+        isPlaying = state[props.playerKey].isPlayed;
     }
 
     return { isPlaying };

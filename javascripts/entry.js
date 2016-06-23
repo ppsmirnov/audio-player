@@ -22,11 +22,22 @@ const store = initStore();
 $(() => {
 
     const song = {
-        src: '/samples/na-zare.mp3'
+        src: '/samples/na-zare.mp3',
+        key: 'na-zare'
+    };
+
+    const song2 = {
+        src: '/samples/na-zare-cover.mp3',
+        key: 'na-zare-cover'
     };
 
     render(
-        <AudioPlayer song = {song} store = {store}/>,
+        <AudioPlayer song = {song} playerKey = 'na-zare' store = {store}/>,
         document.querySelector('.test')
+    );
+
+    render(
+        <AudioPlayer song = {song2} playerKey = 'na-zare-cover' store = {store}/>,
+        document.querySelector('.test2')
     );
 });
