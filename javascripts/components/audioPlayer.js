@@ -17,7 +17,7 @@ class AudioPlayer extends Component {
         this.props.store.dispatch({
             type: INIT_PLAYER,
             payload: {
-                key: this.props.playerKey,
+                key: this.props.song.src,
                 urls: [this.props.song.src],
                 onEnd: this.stopAudio.bind(this)
             }
@@ -28,22 +28,23 @@ class AudioPlayer extends Component {
         this.props.store.dispatch({
             type: STOP_PLAYER,
             payload: {
-                key: this.props.playerKey
+                key: this.props.song.src
             }
         });
     }
 
     render() {
+        console.log('Render!');
         return (
             <div className = 'audio-player'>
-                <p>{this.props.song.src}</p>
-                <Buttons playerKey = {this.props.playerKey} store = {this.props.store} />
-                <SongTime playerKey = {this.props.playerKey} store = {this.props.store} />
+                <Buttons playerKey = {this.props.song.src} store = {this.props.store} />
+                <SongTime playerKey = {this.props.song.src}
+                          store = {this.props.store} />
                 <div className = 'position-container'>
-                    <Position playerKey = {this.props.playerKey} store = {this.props.store} />
+                    <Position playerKey = {this.props.song.src} store = {this.props.store} />
                 </div>
                 <div className = 'volume-container'>
-                    <Volume playerKey = {this.props.playerKey} store = {this.props.store} />
+                    <Volume playerKey = {this.props.song.src} store = {this.props.store} />
                 </div>
             </div>
         );

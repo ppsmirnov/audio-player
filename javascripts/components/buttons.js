@@ -30,20 +30,15 @@ class Buttons extends Component {
     }
 
     render() {
-        console.log(this.props);
-
-        const playing = this.props.isPlaying;
-
         const classes = cn(
             'audio-player__buttons',
             {
-                'audio-player__buttons--playing': playing
+                'audio-player__buttons--playing': this.props.isPlaying
             }
         );
 
         return (
-            <div className = {classes} onClick = {this.playMusic.bind(this)}>
-            </div>
+            <div className = {classes} onClick = {this.playMusic.bind(this)} />
         );
     }
 }

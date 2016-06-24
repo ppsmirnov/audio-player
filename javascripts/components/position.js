@@ -29,8 +29,8 @@ class Position extends Component {
         const pos = this.props.audio.currentTime;
         const buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
 
-        $(this.refs.slider).width(pos * this.state.width / this.props.audio.duration);
-        $(this.refs.buffer).width(buffer * this.state.width / this.props.audio.duration);
+        $(this.refs.slider).width(pos / this.props.audio.duration * 100 + '%');
+        $(this.refs.buffer).width(buffer / this.props.audio.duration * 100 + '%');
 
         this.interval = requestAnimationFrame(this.updateSliders.bind(this));
     }
@@ -49,7 +49,7 @@ class Position extends Component {
 
         const newVolume = (clickOffset - this.state.offset) / this.state.width;
 
-        $(this.refs.slider).width(clickOffset - this.state.offset);
+        $(this.refs.slider).width((clickOffset - this.state.offset) / 100 + '%');
 
         this.props.audio.currentTime = (newVolume * this.props.audio.duration);
     }

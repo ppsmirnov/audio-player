@@ -7,6 +7,7 @@ class Slider extends Component {
         this.setDimVariables();
 
         $(this.refs.pos).css('left', this.props.pos + '%');
+        $(this.refs.bg).width(this.props.pos + '%');
     }
 
     setDimVariables() {
@@ -34,6 +35,8 @@ class Slider extends Component {
         const newLeft = this.checkSliderRange(rawNewLeft);
 
         $(this.refs.pos).css('left', newLeft + '%');
+        $(this.refs.bg).width(newLeft + '%');
+
         if (this.props.onSliderChange) this.props.onSliderChange(newLeft);
     }
 
@@ -52,6 +55,9 @@ class Slider extends Component {
             <div className = 'slider'
                   onMouseDown = {this.onSliderClick.bind(this)}
                   ref = 'container'>
+                <div className = 'slider-bg'
+                     ref = 'bg'
+                     />
                 <div className = 'slider-pos'
                      ref = 'pos'
                      onMouseDown = {this.onMouseDown.bind(this)}/>

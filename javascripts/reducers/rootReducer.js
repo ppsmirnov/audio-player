@@ -9,12 +9,12 @@ const rootReducer = (state = {}, action) => {
         audio.volume = 0.5;
         audio.onended = action.payload.onEnd;
 
-        const newState = _.merge(state, {
+        const newState = {...state, ...{
             [action.payload.key]: {
                 audio: audio,
                 isPlayed: false
             }
-        });
+        }};
 
         return newState;
     }
@@ -24,13 +24,12 @@ const rootReducer = (state = {}, action) => {
         const audio = state[action.payload.key].audio;
         audio.play();
 
-        const newState = _.merge(state, {
+        const newState = {...state, ...{
             [action.payload.key]: {
                 audio: audio,
                 isPlayed: true
             }
-        });
-
+        }};
         return newState;
     }
 
@@ -39,14 +38,13 @@ const rootReducer = (state = {}, action) => {
         const audio = state[action.payload.key].audio;
         audio.pause();
 
-        const newState = _.merge(state, {
+        const newState = {...state, ...{
             [action.payload.key]: {
                 audio: audio,
                 isPlayed: false
             }
-        });
+        }};
 
-        console.log(newState);
         return newState;
     }
 
@@ -56,18 +54,18 @@ const rootReducer = (state = {}, action) => {
         audio.pause();
         audio.currentTime = 0;
 
-        const newState = _.merge(state, {
+        const newState = {...state, ...{
             [action.payload.key]: {
                 audio: audio,
                 isPlayed: false
             }
-        });
+        }};
 
         return newState;
     }
 
     if (action.type == actionTypes.PAUSE_ALL_PLAYERS) {
-        return _.mapValues(state, (obj) => {
+        return _.mapValues(_.clone(state), (obj) => {
             obj.audio.pause();
             obj.isPlayed = false;
 

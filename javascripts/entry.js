@@ -17,6 +17,21 @@ const initStore = (changeMiddlewares = mws => mws) => createStore(
     )
 );
 
+class TestDiv extends React.Component {
+    componentDidMount() {
+        setInterval(() => {
+            this.forceUpdate();
+        }, 200);
+    }
+
+    render() {
+        console.log('TestDiv render!');
+        return (
+            <div>{this.props.children}</div>
+        );
+    }
+}
+
 const store = initStore();
 
 $(() => {
@@ -31,13 +46,23 @@ $(() => {
         key: 'na-zare-cover'
     };
 
+    const song3 = {
+        src: '/samples/ja-budu-ryadom.mp3',
+        key: 'budu'
+    };
+
     render(
-        <AudioPlayer song = {song} playerKey = 'na-zare' store = {store}/>,
+        <AudioPlayer song = {song} store = {store}/>,
         document.querySelector('.test')
     );
 
     render(
-        <AudioPlayer song = {song2} playerKey = 'na-zare-cover' store = {store}/>,
+        <AudioPlayer song = {song2} store = {store}/>,
         document.querySelector('.test2')
+    );
+
+    render(
+        <AudioPlayer song = {song3} store = {store}/>,
+        document.querySelector('.test3')
     );
 });
