@@ -3,7 +3,7 @@ import ReactDom, { render } from 'react-dom';
 import { createStore, compose } from 'redux';
 
 import rootReducer from './reducers/rootReducer';
-import AudioPlayer from 'components/audioPlayer';
+import AudioPlayer from './components/audioPlayer';
 
 const initStore = (changeMiddlewares = mws => mws) => createStore(
 
@@ -17,38 +17,26 @@ const initStore = (changeMiddlewares = mws => mws) => createStore(
     )
 );
 
-class TestDiv extends React.Component {
-    componentDidMount() {
-        setInterval(() => {
-            this.forceUpdate();
-        }, 200);
-    }
-
-    render() {
-        console.log('TestDiv render!');
-        return (
-            <div>{this.props.children}</div>
-        );
-    }
-}
-
 const store = initStore();
 
 $(() => {
 
     const song = {
-        src: '/samples/na-zare.mp3',
-        key: 'na-zare'
+        file_src: '/samples/na-zare.mp3',
+        artist: 'Альянс',
+        title: 'На Заре'
     };
 
     const song2 = {
-        src: '/samples/na-zare-cover.mp3',
-        key: 'na-zare-cover'
+        file_src: '/samples/na-zare-cover.mp3',
+        artist: 'Не Твоё Дело',
+        title: 'На Заре'
     };
 
     const song3 = {
-        src: '/samples/ja-budu-ryadom.mp3',
-        key: 'budu'
+        file_src: '/samples/ja-budu-ryadom.mp3',
+        artist: 'Не твоё дело',
+        title: 'Я буду рядом'
     };
 
     render(

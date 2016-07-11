@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom, { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 class Position extends Component {
 
@@ -15,10 +16,15 @@ class Position extends Component {
 
     componentDidMount() {
         this.setDimVariables();
+        $(window).bind('resize.position', _.debounce(this.setDimVariables.bind(this), 200));
+    }
+
+    componentWillUnmount() {
+        $(window).unbind('resize.position');
     }
 
     componentDidUpdate() {
-        if (this.props.isPlaying) {
+        if (this.isPlaying()) {
             this.interval = requestAnimationFrame(this.updateSliders.bind(this));
         } else {
             cancelAnimationFrame(this.interval);
@@ -26,8 +32,14 @@ class Position extends Component {
     }
 
     updateSliders() {
+        let buffer;
         const pos = this.props.audio.currentTime;
-        const buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
+
+        if (this.props.audio.buffered.length == 0) {
+            buffer = 0;
+        } else {
+            buffer = this.props.audio.buffered.end(this.props.audio.buffered.length - 1);
+        }
 
         $(this.refs.slider).width(pos / this.props.audio.duration * 100 + '%');
         $(this.refs.buffer).width(buffer / this.props.audio.duration * 100 + '%');
@@ -46,12 +58,15 @@ class Position extends Component {
 
     handleClick(event) {
         const clickOffset = event.nativeEvent.x;
-
         const newVolume = (clickOffset - this.state.offset) / this.state.width;
 
         $(this.refs.slider).width((clickOffset - this.state.offset) / 100 + '%');
-
         this.props.audio.currentTime = (newVolume * this.props.audio.duration);
+        this.updateSliders();
+    }
+
+    isPlaying() {
+        return this.props.status == 'playing';
     }
 
     render() {
@@ -66,14 +81,18 @@ class Position extends Component {
     }
 }
 
+Position.contextTypes = {
+    store: PropTypes.object
+};
+
 export default connect((state, props) => {
     let audio;
-    let isPlaying = false;
+    let status = 'stopped';
 
-    if (state[props.playerKey]) {
-        audio = state[props.playerKey].audio;
-        isPlaying = state[props.playerKey].isPlayed;
+    if (state.getIn([props.playerKey])) {
+        audio = state.getIn([props.playerKey, 'audio']);
+        status = state.getIn([props.playerKey, 'status']);
     }
 
-    return { audio, isPlaying };
+    return { audio, status };
 })(Position);

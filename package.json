@@ -34,6 +34,7 @@
     "gulp-filter": "^3.0.1",
     "gulp-plumber": "^1.0.1",
     "gulp-sourcemaps": "^1.6.0",
+    "immutable": "^3.7.6",
     "jasmine-core": "^2.3.4",
     "jasmine-react": "^1.1.0",
     "jasmine-react-helpers": "^0.2.2",

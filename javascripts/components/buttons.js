@@ -3,25 +3,27 @@ import { connect } from 'react-redux';
 import cn from 'classnames';
 
 import {
-    PLAY_PLAYER,
-    PAUSE_PLAYER,
-    PAUSE_ALL_PLAYERS
+    PLAYER_PLAY,
+    PLAYER_PAUSE,
+    PLAYER_PAUSE_ALL
 } from '../actions/actionTypes';
 
 class Buttons extends Component {
 
     playMusic() {
-        if (this.props.isPlaying) {
-            this.props.store.dispatch({
-                type: PAUSE_PLAYER,
+        if (this.props.nonPlayable) return;
+
+        if (this.isPlaying()) {
+            this.context.store.dispatch({
+                type: PLAYER_PAUSE,
                 payload: {
                     key: this.props.playerKey
                 }
             });
         } else {
-            this.props.store.dispatch({type: PAUSE_ALL_PLAYERS});
-            this.props.store.dispatch({
-                type: PLAY_PLAYER,
+            this.context.store.dispatch({type: PLAYER_PAUSE_ALL});
+            this.context.store.dispatch({
+                type: PLAYER_PLAY,
                 payload: {
                     key: this.props.playerKey
                 }
@@ -29,26 +31,37 @@ class Buttons extends Component {
         }
     }
 
+    isPlaying() {
+        return this.props.status == 'playing';
+    }
+
     render() {
         const classes = cn(
             'audio-player__buttons',
             {
-                'audio-player__buttons--playing': this.props.isPlaying
+                'audio-player__buttons--playing': this.isPlaying(),
+                'audio-player__buttons--non-playable': this.props.nonPlayable
             }
         );
 
         return (
-            <div className = {classes} onClick = {this.playMusic.bind(this)} />
+            <div className = {classes} onClick = {this.playMusic.bind(this)}>
+                <div className = 'audio-player__buttons-inner' />
+            </div>
         );
     }
 }
 
-export default connect((state, props) => {
-    let isPlaying = false;
+Buttons.contextTypes = {
+    store: PropTypes.object
+};
 
-    if (state[props.playerKey]) {
-        isPlaying = state[props.playerKey].isPlayed;
+export default connect((state, props) => {
+    let status = 'stopped';
+
+    if (state.getIn([props.playerKey])) {
+        status = state.getIn([props.playerKey, 'status']);
     }
 
-    return { isPlaying };
+    return { status };
 })(Buttons);

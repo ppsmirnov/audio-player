@@ -21,8 +21,8 @@ class Volume extends Component {
 export default connect((state, props) => {
     let audio;
 
-    if (state[props.playerKey]) {
-        audio = state[props.playerKey].audio;
+    if (state.getIn([props.playerKey])) {
+        audio = state.getIn([props.playerKey, 'audio']);
     }
 
     return { audio };

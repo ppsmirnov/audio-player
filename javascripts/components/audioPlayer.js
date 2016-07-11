@@ -1,54 +1,115 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import cn from 'classnames';
 
 import Buttons from './buttons';
 import Volume from './volume';
 import Position from './position';
-import Slider from './slider';
 import SongTime from './songtime';
 
 import {
-    INIT_PLAYER,
-    STOP_PLAYER
+    PLAYER_INIT,
+    PLAYER_STOP,
+    PLAYER_SET_DURATION,
+    PLAYER_DESTROY
 } from '../actions/actionTypes';
 
 class AudioPlayer extends Component {
 
+    getChildContext() {
+        return {store: this.props.store};
+    }
+
     componentDidMount() {
         this.props.store.dispatch({
-            type: INIT_PLAYER,
+            type: PLAYER_INIT,
             payload: {
-                key: this.props.song.src,
-                urls: [this.props.song.src],
-                onEnd: this.stopAudio.bind(this)
+                key: this.props.song.file_src,
+                urls: [this.props.song.file_src],
+                onEnd: this.stopAudio.bind(this),
+                onMetaLoad: this.setDuration.bind(this)
+            }
+        });
+    }
+
+
+    setDuration() {
+        this.props.store.dispatch({
+            type: PLAYER_SET_DURATION,
+            payload: {
+                key: this.props.song.file_src
             }
         });
     }
 
     stopAudio() {
         this.props.store.dispatch({
-            type: STOP_PLAYER,
+            type: PLAYER_STOP,
             payload: {
-                key: this.props.song.src
+                key: this.props.song.file_src
             }
         });
     }
 
+    renderTitle() {
+        if (this.props.song.artist && this.props.song.title) {
+            return `${this.props.song.artist} - ${this.props.song.title}`;
+        } else {
+            return this.props.song.file_file_name;
+        }
+    }
+
+    isStopped() {
+        return this.props.status == 'stopped';
+    }
+
     render() {
-        console.log('Render!');
+        const classes = cn(
+            'audio-player',
+            {
+                'audio-player--stopped': this.isStopped(),
+                'audio-player--non-playable': this.props.nonPlayable
+            }
+        );
+
+        let position = <div className = 'position-container'>
+            <div className = 'audio-player__title'>{this.renderTitle()}</div>
+        </div>;
+
+        let volume = null;
+
+        if (!this.props.nonPlayable) {
+            position = <div className = 'position-container'>
+                <div className = 'audio-player__title'>{this.renderTitle()}</div>
+                <Position playerKey = {this.props.song.file_src} />
+            </div>
+            volume = <div className = 'volume-container'>
+                <SongTime playerKey = {this.props.song.file_src} />
+                <Volume playerKey = {this.props.song.file_src} />
+            </div>
+        }
+
         return (
-            <div className = 'audio-player'>
-                <Buttons playerKey = {this.props.song.src} store = {this.props.store} />
-                <SongTime playerKey = {this.props.song.src}
-                          store = {this.props.store} />
-                <div className = 'position-container'>
-                    <Position playerKey = {this.props.song.src} store = {this.props.store} />
-                </div>
-                <div className = 'volume-container'>
-                    <Volume playerKey = {this.props.song.src} store = {this.props.store} />
-                </div>
+            <div className = {classes}>
+                <Buttons playerKey = {this.props.song.file_src}
+                         nonPlayable = {this.props.nonPlayable}/>
+                {position}
+                {volume}
             </div>
         );
     }
 }
 
-export default AudioPlayer;
+AudioPlayer.childContextTypes = {
+    store: PropTypes.object
+};
+
+export default connect((state, props) => {
+    let status = 'stopped';
+
+    if (state.getIn([props.song.file_src])) {
+        status = state.getIn([props.song.file_src, 'status']);
+    }
+
+    return { status };
+})(AudioPlayer);

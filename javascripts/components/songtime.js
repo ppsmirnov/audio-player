@@ -10,8 +10,10 @@ class SongTime extends Component {
         this.state = {time: 0};
     }
 
-    componentDidUpdate() {
-        if (this.props.isPlaying) {
+    componentWillReceiveProps(nextProps) {
+        if (this.props.status == nextProps.status) return;
+
+        if (this.isPlaying(nextProps)) {
             this.interval = setInterval(() => {
                 this.setState({
                     time: this.props.audio.currentTime
@@ -22,6 +24,10 @@ class SongTime extends Component {
         }
     }
 
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
     formatTime(time) {
         let minutes = Math.floor(time / 60);
         let seconds = Math.floor(time - minutes * 60);
@@ -30,23 +36,39 @@ class SongTime extends Component {
         return `${minutes}:${seconds}`;
     }
 
+    isPlaying(props = this.props) {
+        return props.status == 'playing';
+    }
+
+    isStopped(props = this.props) {
+        return props.status == 'stopped';
+    }
+
     render() {
+        const time = this.isStopped() ? 0 : this.state.time;
+
         return (
             <div className = 'audio-player__song-time'>
-                {this.formatTime(this.state.time)}
+                {this.formatTime(time)}
             </div>
          );
     }
 }
 
+SongTime.contextTypes = {
+    store: PropTypes.object
+};
+
 export default connect((state, props) => {
     let audio;
-    let isPlaying = false;
+    let duration;
+    let status = 'stopped';
 
-    if (state[props.playerKey]) {
-        audio = state[props.playerKey].audio;
-        isPlaying = state[props.playerKey].isPlayed;
+    if (state.getIn([props.playerKey])) {
+        audio = state.getIn([props.playerKey, 'audio']);
+        status = state.getIn([props.playerKey, 'status']);
+        duration = state.getIn([props.playerKey, 'duration']);
     }
 
-    return { audio, isPlaying };
+    return { audio, status, duration };
 })(SongTime);

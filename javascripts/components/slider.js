@@ -8,6 +8,8 @@ class Slider extends Component {
 
         $(this.refs.pos).css('left', this.props.pos + '%');
         $(this.refs.bg).width(this.props.pos + '%');
+
+        $(window).bind('resize.slider', _.debounce(this.setDimVariables.bind(this), 200));
     }
 
     setDimVariables() {
@@ -18,6 +20,10 @@ class Slider extends Component {
             width: dims.width,
             posWidth: $(this.refs.pos).width()
         });
+    }
+
+    componentWillUnmount() {
+        $(window).unbind('resize.slider');
     }
 
     onMouseDown() {
@@ -41,8 +47,8 @@ class Slider extends Component {
     }
 
     checkSliderRange(value) {
-        if (value > 100) {
-            return 100;
+        if (value > 100 - this.state.posWidth) {
+            return 100 - this.state.posWidth;
         } else if (value < 0) {
             return 0;
         }
